@@ -21,7 +21,7 @@ spec:
           serviceAccountName: service-account-name
           containers:
             - name: postgres-backup
-              image: eeshugerman/postgres-backup-s3:15
+              image: registry.uw.systems/energy/postgres-base-backup:latest
               imagePullPolicy: "IfNotPresent"
               volumeMounts:
                 - mountPath: /backups
@@ -33,7 +33,7 @@ spec:
                     command: ["/bin/sh", "-c", "rm /backups/*"]
               env:
                 - name: S3_REGION
-                  value: "eu-west"
+                  value: "eu-west-1"
                 - name: S3_BUCKET
                   value: "s3-bucket-name"
                 - name: S3_PREFIX
