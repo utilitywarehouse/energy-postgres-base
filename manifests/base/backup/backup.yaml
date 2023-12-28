@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+  labels:
+    app: postgres-backup
+spec:
+  schedule: "@daily"
+  concurrencyPolicy: Allow
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            injector.tumblr.com/request: vault-init-container-aws
+        spec:
+          imagePullSecrets:
+            - name: dockerhub-key
+          serviceAccountName: service-account-name
+          containers:
+            - name: postgres-backup
+              image: eeshugerman/postgres-backup-s3:15
+              imagePullPolicy: "IfNotPresent"
+              volumeMounts:
+                - mountPath: /backups
+                  name: postgres-backup-pvc
+              # after the backup is complete cleanup the backup files
+              lifecycle:
+                preStop:
+                  exec:
+                    command: ["/bin/sh", "-c", "rm /backups/*"]
+              env:
+                - name: S3_REGION
+                  value: "eu-west"
+                - name: S3_BUCKET
+                  value: "s3-bucket-name"
+                - name: S3_PREFIX
+                  value: "backups"
+                - name: POSTGRES_HOST
+                  value: "postgres"
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgresql
+                      key: user
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgresql
+                      key: admin-password
+                - name: POSTGRES_DATABASE
+                  value: "database"
+                - name: POSTGRES_PORT
+                  value: "5432"
+                - name: PGDUMP_EXTRA_OPTS
+                  value: "-f /backups/file"
+          restartPolicy: OnFailure
+          volumes:
+            - name: postgres-backup-pvc
+              persistentVolumeClaim:
+                claimName: postgres-backup-pvc
