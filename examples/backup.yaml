@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+spec:
+  schedule: "@daily"
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            injector.tumblr.com/request: vault-init-container-aws
+        spec:
+          serviceAccountName: <service-account-with-vault-access>
+          containers:
+            - name: postgres-backup
+              image: eeshugerman/postgres-backup-s3:16
+              env:
+                - name: S3_BUCKET
+                  value: "<s3-bucket-name>"
+                - name: S3_PREFIX
+                  value: "<s3-folder-name>"
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: example-postgres-secrets
+                      key: user
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: example-postgres-secrets
+                      key: password
+                - name: POSTGRES_DATABASE
+                  value: "example"
+          volumes:
+            - name: postgres-backup-pvc
+              persistentVolumeClaim:
+                claimName: example-backup-pvc
