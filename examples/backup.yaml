@@ -32,7 +32,7 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: example-postgres-secrets
-                      key: password
+                      key: user-password
                 - name: POSTGRES_DATABASE
                   value: "example"
           volumes:

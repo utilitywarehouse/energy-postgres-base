@@ -49,7 +49,7 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: postgresql
-                      key: admin-password
+                      key: user-password
                 - name: POSTGRES_DATABASE
                   value: "database"
                 - name: POSTGRES_PORT
