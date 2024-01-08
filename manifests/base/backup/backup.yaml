@@ -26,11 +26,6 @@ spec:
               volumeMounts:
                 - mountPath: /backups
                   name: postgres-backup-pvc
-              # after the backup is complete cleanup the backup files
-              lifecycle:
-                preStop:
-                  exec:
-                    command: ["/bin/sh", "-c", "rm /backups/*"]
               env:
                 - name: S3_REGION
                   value: "eu-west-1"
