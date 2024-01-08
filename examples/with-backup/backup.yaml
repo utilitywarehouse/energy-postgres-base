@@ -35,6 +35,8 @@ spec:
                       key: user-password
                 - name: POSTGRES_DATABASE
                   value: "example"
+                - name: POSTGRES_HOST
+                  value: "example-a-postgresql"
           volumes:
             - name: postgres-backup-pvc
               persistentVolumeClaim:
