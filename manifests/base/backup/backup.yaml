@@ -54,8 +54,6 @@ spec:
                   value: "database"
                 - name: POSTGRES_PORT
                   value: "5432"
-                - name: PGDUMP_EXTRA_OPTS
-                  value: "-f /backups/file"
           restartPolicy: OnFailure
           volumes:
             - name: postgres-backup-pvc
