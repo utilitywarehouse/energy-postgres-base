@@ -24,7 +24,7 @@ spec:
               image: registry.uw.systems/energy/postgres-base-backup:latest
               imagePullPolicy: "IfNotPresent"
               volumeMounts:
-                - mountPath: /backups
+                - mountPath: /backup
                   name: postgres-backup-pvc
               env:
                 - name: S3_REGION
