@@ -3,7 +3,7 @@
 ## With Backup
 ### Backup Bucket
 
-First you need to create an S3 backup bucket to store the backups in. This is done in [terraform](https://github.com/utilitywarehouse/terraform/) using a terraform [module](https://github.com/utilitywarehouse/system-terraform-modules/tree/main/aws_bucket_access). You will need to add a the following blocks
+First you need to create an S3 backup bucket to store the backups in. This is done in [terraform](https://github.com/utilitywarehouse/terraform/) using a terraform [module](https://github.com/utilitywarehouse/system-terraform-modules/tree/main/aws_bucket_access). You will need to add the following blocks
 
 ``` hcl
 # Your S3 bucket
