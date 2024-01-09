@@ -11,7 +11,7 @@ spec:
   containers:
   - name: pg-restore
     image: registry.uw.systems/energy/postgres-base-backup:latest
-    command: ['sh', '-c', 'backup.sh']
+    command: ['sh', 'restore.sh']
     env:
       - name: S3_REGION
         value: "eu-west-1"
