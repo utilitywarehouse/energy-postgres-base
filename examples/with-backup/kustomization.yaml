@@ -3,7 +3,7 @@ kind: Kustomization
 namePrefix: example-a-
 namespace: "<your-namespace>"
 resources:
-  - http://github.com/utilitywarehouse/shared-kustomize-bases//postgresql/manifests/postgres-with-backup?ref=<update-ref-here>
+  - http://github.com/utilitywarehouse/energy-postgres-base//manifests/postgres-with-backup?ref=<update-ref-here>
 secretGenerator:
   - name: postgresql
     envs:

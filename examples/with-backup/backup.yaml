@@ -24,14 +24,11 @@ spec:
                 - name: S3_PREFIX
                   value: "<s3-folder-name>"
                 - name: POSTGRES_USER
-                  valueFrom:
-                    secretKeyRef:
-                      name: example-postgres-secrets
-                      key: user
+                  value: "<your-postgres-user>"
                 - name: POSTGRES_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: example-postgres-secrets
+                      name: example-postgresql-secrets
                       key: user-password
                 - name: POSTGRES_DATABASE
                   value: "example"
