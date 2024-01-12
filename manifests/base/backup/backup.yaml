@@ -28,24 +28,45 @@ spec:
                   name: postgres-backup-pvc
               env:
                 - name: S3_REGION
-                  value: "eu-west-1"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: backup
+                      key: s3-region
                 - name: S3_BUCKET
-                  value: "s3-bucket-name"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: backup
+                      key: s3-bucket
                 - name: S3_PREFIX
-                  value: "backups"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: backup
+                      key: s3-prefix
                 - name: POSTGRES_HOST
-                  value: "postgres"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: postgresql
+                      key: host
                 - name: POSTGRES_USER
-                  value: "postgres"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: postgresql
+                      key: user
                 - name: POSTGRES_PASSWORD
                   valueFrom:
-                    secretKeyRef:
+                    configMapKeyRef:
                       name: postgresql
                       key: user-password
                 - name: POSTGRES_DATABASE
-                  value: "database"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: postgresql
+                      key: database
                 - name: POSTGRES_PORT
-                  value: "5432"
+                  valueFrom:
+                    configMapKeyRef:
+                      name: postgresql
+                      key: port
           restartPolicy: OnFailure
           volumes:
             - name: postgres-backup-pvc
