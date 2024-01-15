@@ -3,13 +3,22 @@ kind: Kustomization
 namePrefix: example-a-
 namespace: "<your-namespace>"
 resources:
-  - http://github.com/utilitywarehouse/energy-postgres-base//manifests/postgres-with-backup?ref=<update-ref-here>
+  - http://github.com/utilitywarehouse/energy-postgres-base//manifests/postgres-with-backup?ref=main
 secretGenerator:
   - name: postgresql
     envs:
       - secrets/postgres.properties
     options:
           disableNameSuffixHash: true
+configMapGenerator:
+  - name: postgresql
+    envs:
+      - config/postgresql
+    literals:
+      - host=example-a-postgresql
+  - name: backup
+    envs:
+      - config/backup
 patches:
   - path: backup.yaml
   - path: backup-pvc.yaml

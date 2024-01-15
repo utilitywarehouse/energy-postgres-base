@@ -6,35 +6,10 @@ spec:
   template:
     spec:
       serviceAccountName: <service-account-with-vault-access>
-      containers:
-        - name: postgresql
-          env:
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: example-postgresql
-                  key: password
-            - name: POSTGRES_DATABASE
-              value: "example"
-            - name: POSTGRES_USER
-              value: "example-user"
-        - name: metrics
-          env:
-            - name: DATA_SOURCE_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: example-postgresql
-                  key: password
-            - name: DATA_SOURCE_USER
-              value: "postgres"
-            - name: DATA_SOURCE_URI
-              value: 127.0.0.1:5432/$(POSTGRES_DATABASE)?sslmode=disable
   volumeClaimTemplates:
     - metadata:
         name: data
       spec:
-        accessModes:
-          - "ReadWriteOnce"
         resources:
           requests:
             storage: 1Gi

@@ -1,0 +1,3 @@
+s3-region=eu-west-1
+s3-bucket=bucket-name
+s3-prefix=backups

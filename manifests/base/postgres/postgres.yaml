@@ -7,10 +7,8 @@ metadata:
   namespace: "default"
   labels:
     app.kubernetes.io/instance: postgresql
-    app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/version: 16.1.0
-    helm.sh/chart: postgresql-13.2.26
     app.kubernetes.io/component: metrics
   annotations:
     app.uw.systems/description: ""
@@ -38,10 +36,8 @@ metadata:
   namespace: "default"
   labels:
     app.kubernetes.io/instance: postgresql
-    app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/version: 16.1.0
-    helm.sh/chart: postgresql-13.2.26
     app.kubernetes.io/component: primary
   annotations:
     app.uw.systems/description: ""
@@ -76,10 +72,8 @@ metadata:
   namespace: "default"
   labels:
     app.kubernetes.io/instance: postgresql
-    app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/version: 16.1.0
-    helm.sh/chart: postgresql-13.2.26
     app.kubernetes.io/component: primary
   annotations:
     app.uw.systems/description: ""
@@ -106,10 +100,8 @@ metadata:
   namespace: "default"
   labels:
     app.kubernetes.io/instance: postgresql
-    app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/version: 16.1.0
-    helm.sh/chart: postgresql-13.2.26
     app.kubernetes.io/component: primary
   annotations:
     app.uw.systems/description: ""
@@ -117,7 +109,7 @@ metadata:
     app.uw.systems/tier: ""
 spec:
   replicas: 1
-  serviceName: postgresql-hl
+  serviceName: postgresql
   updateStrategy:
     rollingUpdate: {}
     type: RollingUpdate
@@ -131,17 +123,15 @@ spec:
       name: postgresql
       labels:
         app.kubernetes.io/instance: postgresql
-        app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: postgresql
         app.kubernetes.io/version: 16.1.0
-        helm.sh/chart: postgresql-13.2.26
         app.kubernetes.io/component: primary
     spec:
       serviceAccountName: default
-      
+
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -153,7 +143,6 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-          
       securityContext:
         fsGroup: 1001
       hostNetwork: false
@@ -177,14 +166,20 @@ spec:
             - name: BITNAMI_DEBUG
               value: "false"
             - name: POSTGRESQL_PORT_NUMBER
-              value: "5432"
+              valueFrom:
+                configMapKeyRef:
+                  name: postgresql
+                  key: port
             - name: POSTGRESQL_VOLUME_DIR
               value: "/bitnami/postgresql"
             - name: PGDATA
               value: "/bitnami/postgresql/data"
             # Authentication
             - name: POSTGRES_USER
-              value: "testuser"
+              valueFrom:
+                configMapKeyRef:
+                  name: postgresql
+                  key: user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -196,7 +191,10 @@ spec:
                   name: postgresql
                   key: password
             - name: POSTGRES_DATABASE
-              value: "database"
+              valueFrom:
+                configMapKeyRef:
+                  name: postgresql
+                  key: database
             # Replication
             # Initdb
             # Standby
@@ -233,7 +231,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - exec pg_isready -U "testuser" -d "dbname=database" -h 127.0.0.1 -p 5432
+                - exec pg_isready -U "$(POSTGRES_USER)" -d "dbname=$(POSTGRES_DATABASE)" -h 127.0.0.1 -p 5432
           readinessProbe:
             failureThreshold: 6
             initialDelaySeconds: 5
@@ -246,7 +244,7 @@ spec:
                 - -c
                 - -e
                 - |
-                  exec pg_isready -U "testuser" -d "dbname=database" -h 127.0.0.1 -p 5432
+                  exec pg_isready -U "$(POSTGRES_USER)" -d "dbname=$(POSTGRES_DATABASE)" -h 127.0.0.1 -p 5432
                   [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
           resources:
             limits:
@@ -276,14 +274,17 @@ spec:
               type: RuntimeDefault
           env:
             - name: DATA_SOURCE_URI
-              value: 127.0.0.1:5432/database?sslmode=disable
+              value: 127.0.0.1:5432/$(POSTGRES_DATABASE)?sslmode=disable
             - name: DATA_SOURCE_PASS
               valueFrom:
                 secretKeyRef:
                   name: postgresql
                   key: user-password
             - name: DATA_SOURCE_USER
-              value: "testuser"
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql
+                  key: user
           ports:
             - name: http-metrics
               containerPort: 9187
