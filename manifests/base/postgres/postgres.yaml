@@ -282,7 +282,7 @@ spec:
                   key: user-password
             - name: DATA_SOURCE_USER
               valueFrom:
-                secretKeyRef:
+                configMapKeyRef:
                   name: postgresql
                   key: user
           ports:
