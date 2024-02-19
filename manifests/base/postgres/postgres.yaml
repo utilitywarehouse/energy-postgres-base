@@ -272,6 +272,11 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           env:
+            - name: POSTGRES_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: postgresql
+                  key: database
             - name: DATA_SOURCE_URI
               value: 127.0.0.1:5432/$(POSTGRES_DATABASE)?sslmode=disable
             - name: DATA_SOURCE_PASS
