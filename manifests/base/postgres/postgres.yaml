@@ -86,7 +86,6 @@ spec:
     - name: tcp-postgresql
       port: 5432
       targetPort: tcp-postgresql
-      nodePort: null
   selector:
     app.kubernetes.io/instance: postgresql
     app.kubernetes.io/name: postgresql
