@@ -286,7 +286,7 @@ spec:
                   name: postgresql
                   key: host
             - name: DATA_SOURCE_URI
-              value: 127.0.0.1:5432/$(POSTGRES_DATABASE)?sslmode=disable
+              value: $(POSTGRES_HOST):5432/$(POSTGRES_DATABASE)?sslmode=disable
             - name: DATA_SOURCE_PASS
               valueFrom:
                 secretKeyRef:
