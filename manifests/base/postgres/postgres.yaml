@@ -231,7 +231,7 @@ spec:
                 - /bin/sh
                 - -c
                 - |
-                  exec pg_isready -U "postgres" - -d "dbname=$(POSTGRES_DATABASE)" -h 127.0.0.1 -p 5432
+                  exec pg_isready -U "postgres" -d "dbname=$(POSTGRES_DATABASE)" -h 127.0.0.1 -p 5432
           readinessProbe:
             failureThreshold: 6
             initialDelaySeconds: 5
