@@ -230,7 +230,8 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - exec pg_isready -U "$(POSTGRES_USER)" -d "dbname=$(POSTGRES_DATABASE)" -h 127.0.0.1 -p 5432
+                - |
+                  exec pg_isready -U "postgres" -d "dbname=$(POSTGRES_DATABASE)" -h 127.0.0.1 -p 5432
           readinessProbe:
             failureThreshold: 6
             initialDelaySeconds: 5
@@ -243,7 +244,7 @@ spec:
                 - -c
                 - -e
                 - |
-                  exec pg_isready -U "$(POSTGRES_USER)" -d "dbname=$(POSTGRES_DATABASE)" -h 127.0.0.1 -p 5432
+                  exec pg_isready -U "postgres" -d "dbname=$(POSTGRES_DATABASE)" -h 127.0.0.1 -p 5432
                   [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
           resources:
             limits:
@@ -258,7 +259,7 @@ spec:
             - name: data
               mountPath: /bitnami/postgresql
         - name: metrics
-          image: docker.io/bitnami/postgres-exporter:0.15.0-debian-11-r4
+          image: docker.io/bitnami/postgres-exporter:0.15.0-debian-12-r13
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
@@ -271,14 +272,21 @@ spec:
             runAsUser: 1001
             seccompProfile:
               type: RuntimeDefault
+          args:
+            - --no-collector.wal
           env:
             - name: POSTGRES_DATABASE
               valueFrom:
                 configMapKeyRef:
                   name: postgresql
                   key: database
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgresql
+                  key: host
             - name: DATA_SOURCE_URI
-              value: 127.0.0.1:5432/$(POSTGRES_DATABASE)?sslmode=disable
+              value: $(POSTGRES_HOST):5432/$(POSTGRES_DATABASE)?sslmode=disable
             - name: DATA_SOURCE_PASS
               valueFrom:
                 secretKeyRef:
