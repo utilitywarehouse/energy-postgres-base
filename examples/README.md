@@ -61,3 +61,25 @@ Apply the restore manifest under examples or copy the backups manually from the 
 ## Just Postgres
 
 Copy the files from [postgres](./postgres) to your kubernetes manifests repo and update the values appropriately for your use case.
+
+## Migration
+
+If you wish to migrate an existing database to one of the available options
+here, you should first take a `pg_dump` of the database in archive mode
+(i.e. NOT the default SQL text dump) and then `pg_restore`. You should
+port-forward to the corresponding container and ensure you have enough
+disk space for the dump (the compressed archive format helps with this).
+
+```
+  # <port-forward to the original running postgres>
+
+  pg_dump -Fd "$ORIGINAL_PG_CONNECTION_STRING" -j 5 -f $ARCHIVE_DIRECTORY
+  # connection strings are available in strongbox secrets
+  # should mkdir $ARCHIVE_DIRECTORY if it doesn't exist
+  # adjust `-j` as preferred
+  
+  # <rm old port-forward and add a new port-forward to the new postgres>
+  
+  pg_restore -d $NEW_PG_CONNECTION_STRING -C $ARCHIVE_DIRECTORY
+  # -C is to create database and might not be needed
+```
