@@ -53,6 +53,9 @@ Again note your service account name.
 
 With the service account in hand we can create our postgres instance. First copy the example overlays/secrets from [with-backup](./with-backup) to your kubernetes manifests repo. There you will need to update the values for you specific use case.
 
+### Restoration
+
+Apply the restore manifest under examples or copy the backups manually from the S3 bucket you created for the backups.
 
 
 ## Just Postgres
