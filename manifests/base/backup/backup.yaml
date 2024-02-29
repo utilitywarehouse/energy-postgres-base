@@ -54,7 +54,7 @@ spec:
                       key: user
                 - name: POSTGRES_PASSWORD
                   valueFrom:
-                    configMapKeyRef:
+                    secretKeyRef:
                       name: postgresql
                       key: user-password
                 - name: POSTGRES_DATABASE
