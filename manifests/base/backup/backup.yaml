@@ -22,7 +22,7 @@ spec:
           containers:
             - name: postgres-backup
               image: registry.uw.systems/energy/postgres-base-backup:latest
-              imagePullPolicy: "IfNotPresent"
+              imagePullPolicy: "Always"
               volumeMounts:
                 - mountPath: /backup
                   name: postgres-backup-pvc
