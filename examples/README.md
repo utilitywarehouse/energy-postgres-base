@@ -55,6 +55,9 @@ With the service account in hand we can create our postgres instance. First copy
 
 ### Restoration
 
+To restore a backup from kubernetes, use the file restore-pod.yaml as a guideline. This will create a Job that in turn will spin a Pod.
+It is very important to note that you should change the resources requests for ephemeral storage big enough to store the backup file.
+
 Apply the restore manifest under examples or copy the backups manually from the S3 bucket you created for the backups.
 
 
