@@ -1,40 +1,58 @@
-apiVersion: v1
-kind: Pod
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: pg-restore
+  name: restore-job-name
 spec:
   template:
     metadata:
       annotations:
         injector.tumblr.com/request: vault-init-container-aws
-  serviceAccountName: service-account-name
-  containers:
-  - name: pg-restore
-    image: registry.uw.systems/energy/postgres-base-backup:latest
-    command: ['sh', 'restore.sh']
-    env:
-      - name: S3_REGION
-        value: "eu-west-1"
-      - name: S3_BUCKET
-        value: "s3-bucket-name"
-      - name: S3_PREFIX
-        value: "backups"
-      - name: POSTGRES_HOST
-        value: "postgres"
-      - name: POSTGRES_USER
-        valueFrom:
-          secretKeyRef:
-            name: postgresql
-            key: user
-      - name: POSTGRES_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: postgresql
-            key: user-password
-      - name: POSTGRES_DATABASE
-        value: "database"
-      - name: POSTGRES_PORT
-        value: "5432"
-      - name: TIMESTAMP
-        value: "2023-12-28T15:16:06"
-    restartPolicy: never
+    spec:
+      restartPolicy: Never
+      serviceAccountName: the-service-account-you-created
+      #imagePullSecrets:
+      #  - name:  dockerhub-key
+      containers:
+      - name: pg-restore
+        resources:
+          requests:
+            ephemeral-storage: 3Gi
+          limits:
+            ephemeral-storage: 5Gi # adjust this to the size of the file you want to backup
+        image: registry.uw.systems/energy/postgres-base-backup:latest
+        command: ['sh', 'restore.sh']
+        env:
+          - name: S3_REGION
+            value: "eu-west-1"
+          - name: S3_BUCKET
+            value: "YOUR_S3_BUCKET_NAME_GOES_HERE"
+          - name: S3_PREFIX
+            value: "YOUR_S3_PREFIX_GOES_HERE" # the prefix is usually to determine the ""folder"" your object is. the full name of the resource is S3_BUCKET+S3_PREFIX+FILE_NAME
+          - name: POSTGRES_HOST
+            value: "YOUR_POSTGRES_HOST_GOES_HERE" # this value is the hostname of the postgres, if your statefulset is named "energy-my-postgres-db" this value should be "energy-my-postgres-db"
+          - name: POSTGRES_USER
+            value: "YOUR_POSTGRES_USER_GOES_HERE"
+            #you can also have this coming from the secrets,
+            #valueFrom:
+              #secretKeyRef:
+                #name: secrets
+                #key: user
+          - name: POSTGRES_PASSWORD
+            value: "YOUR_POSTGRES_PASSWORD_GOES_HERE"
+            #you can also have this coming from the secrets,
+            #valueFrom:
+              #secretKeyRef:
+                #name: secrets
+                #key: password
+          - name: POSTGRES_DATABASE
+            value: "YOUR_POSTGRES_DATABASE_GOES_HERE"
+            #you can also have this coming from the secrets,
+            #valueFrom:
+              #secretKeyRef:
+                #name: secrets
+                #key: database
+          - name: POSTGRES_PORT
+            value: "5432"
+          # you should get this timestamp in the s3 object name
+          - name: TIMESTAMP
+            value: "2024-03-13T10:49:27"
