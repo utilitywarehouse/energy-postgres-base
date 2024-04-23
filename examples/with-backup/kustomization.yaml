@@ -4,12 +4,15 @@ namePrefix: example-a-
 namespace: "<your-namespace>"
 resources:
   - http://github.com/utilitywarehouse/energy-postgres-base//manifests/postgres-with-backup?ref=main
+commonLabels:
+  app.kubernetes.io/instance: example-a-postgresql
+  app.kubernetes.io/name: example-a-postgresql
 secretGenerator:
   - name: postgresql
     envs:
       - secrets/postgres.properties
     options:
-          disableNameSuffixHash: true
+      disableNameSuffixHash: true
 configMapGenerator:
   - name: postgresql
     envs:
