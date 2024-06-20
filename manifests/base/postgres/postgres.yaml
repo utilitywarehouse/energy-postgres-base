@@ -8,7 +8,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: postgresql
     app.kubernetes.io/name: postgresql
-    app.kubernetes.io/version: 16.1.0
+    app.kubernetes.io/version: 16.3.0
     app.kubernetes.io/component: primary
   annotations:
     app.uw.systems/description: ""
@@ -34,7 +34,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: postgresql
     app.kubernetes.io/name: postgresql
-    app.kubernetes.io/version: 16.1.0
+    app.kubernetes.io/version: 16.3.0
     app.kubernetes.io/component: primary
   annotations:
     app.uw.systems/description: ""
@@ -57,7 +57,7 @@ spec:
       labels:
         app.kubernetes.io/instance: postgresql
         app.kubernetes.io/name: postgresql
-        app.kubernetes.io/version: 16.1.0
+        app.kubernetes.io/version: 16.3.0
         app.kubernetes.io/component: primary
     spec:
       serviceAccountName: default
@@ -82,7 +82,7 @@ spec:
       hostIPC: false
       containers:
         - name: postgresql
-          image: docker.io/bitnami/postgresql:16.2.0-debian-12-r5
+          image: docker.io/bitnami/postgresql:16.3.0-debian-12-r14
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
@@ -193,7 +193,7 @@ spec:
             - name: data
               mountPath: /bitnami/postgresql
         - name: metrics
-          image: docker.io/bitnami/postgres-exporter:0.15.0-debian-12-r13
+          image: docker.io/bitnami/postgres-exporter:0.15.0-debian-12-r33
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
